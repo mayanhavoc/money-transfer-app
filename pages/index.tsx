@@ -1,4 +1,11 @@
-import { useState } from "react";
+import {
+      Box
+    , Heading
+    , Text
+    , Spinner
+    , Center
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import useWallet from "../contexts/wallet";
 import ConnectWallet from "../components/connectWallet";
