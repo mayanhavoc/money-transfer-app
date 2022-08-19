@@ -4,6 +4,7 @@ import { WalletProvider } from "../contexts/wallet";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
@@ -11,6 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <WalletProvider>
                 <Navbar />
                 <Component {...pageProps} />
+                <Footer />
             </WalletProvider>
         </ChakraProvider>
     );
