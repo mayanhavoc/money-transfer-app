@@ -25,10 +25,10 @@ export default function connectWallet() {
                             onClick={() => connectWallet(wallet.name)}
                             disabled= { walletConnected || connecting || walletNameConnected
                              == wallet.name }>
-
+                            Connect with {wallet.name}
                         </button>
                     ))
-            }
+            : "" }
         </>
-    )
+    );
 }
