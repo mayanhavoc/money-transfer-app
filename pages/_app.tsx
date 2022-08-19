@@ -2,6 +2,8 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { WalletProvider } from "../contexts/wallet";
 import { ChakraProvider } from "@chakra-ui/react";
+import { ApolloProvider } from "@apollo/client";
+import client from "../apollo-client";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
