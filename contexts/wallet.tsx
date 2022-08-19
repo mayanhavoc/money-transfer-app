@@ -1,4 +1,4 @@
-import React, {
+import {
       createContext
     , useState
     , useContext
@@ -13,7 +13,8 @@ const WalletContext = createContext({
     , walletNameConnected: ""
     , walletConnected: false
     , connectWallet: async (walletName: string) => {}
-    , connectedAddress: "",
+    , connectedAddress: ""
+    , currentNetwork: "",
 });
 
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
@@ -22,19 +23,24 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     const [connecting, setConnecting] = useState<boolean>(false);
     const [walletNameConnected, setWalletNameConnected] = useState<string>("");
     const [connectedAddress, setConnectedAddress] = useState<string>("");
+    const [currentNetwork, setCurrentNetwork] = useState<string | undefined>(undefined)
 
-    const connectWallet = async (walletName: string) => {
-        setConnecting(true);
-        const _wallet = await BrowserWallet.enable(walletName);
-        const _address = await _wallet.getUsedAddresses();
-        if (_wallet) {
-            setWallet(_wallet);
-            setWalletNameConnected(walletName);
-            setWalletConnected(true);
-            setConnectedAddress(_address[0]);
-        }
-        setConnecting(false);
-    };
+
+        const connectWallet = async (walletName: string) => {
+            setConnecting(true);
+            const _wallet = await BrowserWallet.enable(walletName);
+            const _address = await _wallet.getUsedAddresses();
+            const _network = await _wallet.getNetworkId();
+            if (_wallet) {
+                setWallet(_wallet);
+                setWalletNameConnected(walletName);
+                setWalletConnected(true);
+                setConnectedAddress(_address[0]);
+                if(_network == 0) setCurrentNetwork("Testnet");
+                if(_network == 1) setCurrentNetwork("Mainnet");
+            }
+            setConnecting(false);
+        };
 
     const memoedValue = useMemo(
         () => ({
@@ -45,7 +51,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
             , connectWallet
             , connectedAddress,
         }),
-        [wallet,walletConnected, connecting, walletNameConnected]
+        [wallet,walletConnected, connecting, walletNameConnected, connectedAddress, connectWallet]
     );
     return (
         <WalletContext.Provider value={memoedValue}>
