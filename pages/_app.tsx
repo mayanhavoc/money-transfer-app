@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { WalletProvider } from "../contexts/wallet";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Box } from "@chakra-ui/react";
 import { ApolloProvider } from "@apollo/client";
 import client from "../apollo-client";
 
@@ -13,7 +13,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <ChakraProvider>
             <WalletProvider>
                 <Navbar />
-                <Component {...pageProps} />
+                <Box w='80%' mx='auto' p='5' mb='24'>
+                    <Component {...pageProps} />
+                </Box>
                 <Footer />
             </WalletProvider>
         </ChakraProvider>
