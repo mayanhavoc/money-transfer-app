@@ -5,15 +5,37 @@ import {
     , Spinner
     , Center
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+
+import { useState, useEffect } from "react";
 import type { NextPage } from "next";
 import useWallet from "../contexts/wallet";
 import ConnectWallet from "../components/connectWallet";
 
 const Home: NextPage = () => {
-    const { wallet, walletConnected, connecting } = useWallet();
+    const { wallet, walletConnected, connecting, connectWallet, connectedAddress } = useWallet();
+    const [currentNetwork, setCurrentNetwork] = useState<"Testnet" | "Mainnet" | "Not Connected">("Not Connected");
     const [ assets, setAssets ] = useState<null | any>(null);
     const [ loading, setLoading ] = useState<boolean>(false);
+
+    useEffect(()=> {
+
+        const fetchNetwork = async () => {
+            const _network = await wallet.getNetworkId();
+            if (_network === 0) {
+                setCurrentNetwork("Testnet")
+            }
+            else if (_network === 1){
+                setCurrentNetwork("Mainnet")
+            }
+            setLoading(false);
+        }
+
+        if (walletConnected) {
+            setLoading(true);
+            fetchNetwork();
+        }
+    }, [walletConnected])
+
 
     async function getAssets() {
         if (wallet) {
@@ -24,31 +46,31 @@ const Home: NextPage = () => {
         }
     }
     return (
-        <div>
-            <h1>Connect Wallet</h1>
+        <Box>
+            <Heading>Connect Wallet</Heading>
+            <Box m='5' p='5' bg='teal.700' color='white'>
+                { loading ? (
+                    <Center>
+                        <Spinner />
+                    </Center>
+                ) : (
+                    <>
+                    {walletConnected ? 
+                        (
+                        <Box w='80%' mx='auto' my='5' p='5' bg='green.100' color='black'>
+                            <Text fontSize='xl'>Successfully connected to {walletConnected} wallet on {currentNetwork} at address: {connectedAddress}</Text>
+                        </Box> ) : (
+                    <Box w='80%' mx='auto' my='5' p='5' bg='green.100' color='black'>
+                        <Text fontSize='xl'>Unsuccessful connection, try again.</Text>
+                    </Box>
+                    )
+                }
             <ConnectWallet />
-            {walletConnected && (
-                <>
-                    <h1>Get Wallet Assets</h1>
-                    {assets ? (
-                        <pre>
-                            <code className="language-js">
-                                {JSON.stringify(assets,null,2)}
-                            </code>
-                        </pre>
-                    ) : (
-                        <button
-                            type="button"
-                            onClick={()=> getAssets()}
-                            disabled={connecting || loading}
-                        >
-                        Get Wallet Assets
-                        </button>
-                    )}
-                </>
-            )}
-        </div>
-    );
-};
+            </>
+        )}
+        </Box>
+    </Box>
+    )
+}
 
 export default Home;
